@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="./bootstrap-5.3.2-dist/css/bootstrap.css" rel="stylesheet" />
+	<link rel="stylesheet" href="./customizations/style.css" />
+	<link rel="stylesheet" href="./bootstrap-5.3.2-dist/icons/font/bootstrap-icons.min.css" />
+	<title>New tab</title>
+</head>
+
+<body>
+	<div class="toast-container position-fixed bottom-0 end-0 p-3">
+		<div class="toast align-items-center border-0 hide" id="toast" role="alert" aria-live="assertive"
+			aria-atomic="true">
+			<div class="d-flex">
+				<div class="toast-body" id="toastMessage"></div>
+				<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+					aria-label="Close"></button>
+			</div>
+		</div>
+	</div>
+
+	<div class="container px-2 d-flex flex-column " style="overflow: auto;  height: 100%;">
+		<div class="text-center w-100">
+			<div class="d-flex">
+				<h3 class="tinted rounded px-2 mt-1" style="width: fit-content;">New Tab</h3>
+				<marquee class="tinted m-auto p-1 rounded w-75" behavior="scroll" direction="left" id="quote"></marquee>
+				<!-- <span class="tinted m-auto p-1 rounded" >
+				</span> -->
+			</div>
+			<div class="d-flex w-100  align-items-start">
+				<div class="d-flex my-auto tinted p-2 rounded" style="flex: 2;">
+					<button class="btn btn-secondary my-auto" type="button" data-bs-toggle="offcanvas" id="todoMenuButton"
+						data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i
+							class="bi bi-list"></i>
+					</button>
+					
+					<div class="form-check form-switch m-auto">
+						<input class="form-check-input" type="checkbox" role="switch" id="displayTodos" >
+						<label class="form-check-label" for="displayTodos">My todos</label>
+					</div>
+				</div>
+				<div class="d-flex justify-content-center" style="margin-left: 0.25rem; flex: 13; transform: scaleY(0); transition: all 0.2s ease-in-out;" id="todoSearchPanel" >
+					<span class=" mx-1 w-50 ">
+						<div class="form-floating ">
+							<input type="text" id="search" class="form-control tinted"
+								placeholder="Recipient's username" aria-label="Recipient's username"
+								aria-describedby="basic-addon2">
+							<label for="search">Search your todos here</label>
+						</div>
+					</span>
+					<span class="my-auto ms-2">
+						<button class="btn btn-light" id="export">
+							<i class="bi bi-box-arrow-up"></i>
+						</button>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="d-flex justify-content-center w-100 mt-3 " style="flex: 2; overflow: auto;">
+
+			<div class="col-md-9 d-flex flex-column" style="overflow: auto; height: 100%;transform: scaleX(0); transition: all 0.2s ease-in-out;" id="todoContainerPanel">
+
+				<div class="d-flex" style=" overflow: auto;">
+					<table class=" table mt-2  " id="todoTable" style="margin-left: 0.5rem;">
+						<tr>
+							<th scope="col">Id</th>
+							<th scope="col">Title</th>
+							<th scope="col">Status</th>
+							<th scope="col">Priority</th>
+							<th scope="col">Action</th>
+							<th scope="col">More details</th>
+						</tr>
+					</table>
+
+					<div class="cards-container" id="todo-cards">
+
+					</div>
+				</div>
+				<nav aria-label="Page navigation example" class="mt-3" style="margin-left: 0.5rem;">
+					<ul class="pagination">
+						<li class="page-item"><button id="prev" prev="0" class="page-link tinted">Previous</button></li>
+						<li class="page-item"><button id="next" next="5" class="page-link tinted">Next</button></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+		<div class="row d-flex flex-column w-100 align-items-center" style="overflow: auto;">
+			<div class="d-flex">
+				<h3 class=" tinted rounded mx-auto">Quick links</h3>
+			</div>
+			<ul class="quick-links" id="quickLinks"></ul>
+		</div>
+	</div>
+
+	<!-- Todo Modal -->
+	<div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form action="" id="todoForm">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="todoModalLabel">Todo</h1>
+						<label id="deleteBtn" class="ms-2 btn btn-danger" style="display: none;">Delete</label>
+
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<input type="hidden" name="mode" id="mode" value="create">
+						<input type="hidden" name="id" id="todoId" value="">
+						<div class="form-floating mt-3">
+							<input type="text" class="form-control" placeholder="Short title of the todo" name="title"
+								id="todoTitle" required>
+							<label for="floatingInput">Title</label>
+						</div>
+						<div class="form-floating mt-3">
+							<textarea name="description" class="form-control" style="height: 100px;"
+								id="todoDescription" placeholder="Password" required></textarea>
+							<label for="floatingPassword">Content</label>
+						</div>
+						<div class="d-flex flex-column mt-3 ms-1">
+							<h6>Priority</h6>
+							<div class="flex d-flex">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="priority" id="todoPriority1"
+										value="1">
+									<label class="form-check-label" for="todoPriority1">
+										High
+									</label>
+								</div>
+								<div class="form-check ms-4">
+									<input class="form-check-input" type="radio" name="priority" id="todoPriority2"
+										value="2">
+									<label class="form-check-label" for="todoPriority2">
+										Medium
+									</label>
+								</div>
+								<div class="form-check ms-4">
+									<input class="form-check-input" type="radio" name="priority" id="todoPriority3"
+										value="3">
+									<label class="form-check-label" for="todoPriority3">
+										Low
+									</label>
+								</div>
+							</div>
+						</div>
+						<select name="status" id="todoStatus" class="mt-2 form-select-sm" required>
+							<option value="" selected>----- select status ----</option>
+							<option value="0">New</option>
+							<option value="1">In Progress</option>
+							<option value="2">Complete</option>
+						</select>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!--Info modal-->
+
+	<div class="modal fade bottom-0" id="infoModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" id="todoInfo"></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Bookmark modal-->
+
+	<div class="modal fade" id="bookmarkModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<form id="bookmarkForm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+
+						<div class="mb-3">
+							<label for="exampleInputEmail1" class="form-label">Title</label>
+							<input type="text" class="form-control" id="bookmarkTitle" aria-describedby="bookmarkTitle"
+								name="title">
+							<div id="emailHelp" class="form-text">Try to keep the title short possibly in
+								one or two words</div>
+						</div>
+						<div class="mb-3">
+							<label for="exampleInputPassword1" class="form-label">URL</label>
+							<input type="text" class="form-control" id="bookmarkLink" name="url">
+						</div>
+
+						<input type="hidden" name="id" id="bookmarkId">
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+		aria-labelledby="offcanvasWithBothOptionsLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Backdrop with scrolling</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body">
+
+			<button type="button" class="btn btn-light mt-1" id="modalOpener" data-bs-toggle="modal"
+				data-bs-target="#todoModal">
+				Create Todo
+			</button>
+			<div class="d-flex my-auto mt-3">
+				<div>
+					<input type="radio" class="btn-check" name="viewMode" id="tableView" autocomplete="off" checked>
+					<label class="btn btn-outline-light" for="tableView">Table view</label>
+				</div>
+				<div class="ms-2">
+					<input type="radio" class="btn-check" name="viewMode" id="cardsView" autocomplete="off">
+					<label class="btn btn-outline-light" for="cardsView">Card view</label>
+				</div>
+			</div>
+			<div class="tinted rounded mt-2 px-2 py-1">
+				<div class="priority-filters mt-2">
+					<h6>Filter by priority</h6>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="1" id="filterHigh" name="priorityFilter">
+						<label class="form-check-label" for="filterHigh">
+							High
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="2" id="filterMedium"
+							name="priorityFilter">
+						<label class="form-check-label" for="filterMedium">
+							Medium
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="3" id="filterLow" name="priorityFilter">
+						<label class="form-check-label" for="filterLow">
+							Low
+						</label>
+					</div>
+				</div>
+				<div class="status-filters mt-2">
+					<h6>Filter by Status</h6>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="2" id="statusComplete"
+							name="statusFilter">
+						<label class="form-check-label" for="statusComplete">
+							Complete
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="1" id="statusInProgress"
+							name="statusFilter">
+						<label class="form-check-label" for="statusInProgress">
+							In Progress
+						</label>
+					</div>
+					<div class="form-check">
+						<input class="form-check-input" type="checkbox" value="0" id="statusNew" name="statusFilter">
+						<label class="form-check-label" for="statusNew">
+							New
+						</label>
+					</div>
+				</div>
+
+			</div>
+
+			<span class="d-flex flex-column mt-2 ">
+				<label class="form-label" for="sorter">Sort by</label>
+				<select name="" id="sorter" class="form-select  ">
+					<option value="-" selected>--select sort category--</option>
+					<option value="priority-1">Priority (High first)</option>
+					<option value="priority-2">Priority (Low first)</option>
+					<option value="status-1">Status (New first)</option>
+					<option value="status-2">Status (Completed first)</option>
+				</select>
+			</span>
+		</div>
+	</div>
+	<script src="bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+	<script src="./scripts/utility.js"></script>
+	<script src="./scripts/main.js" defer></script>
+	<script src="./scripts/registeredEventListeners.js"></script>
+
+</body>
+
+</html>

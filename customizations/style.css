@@ -1,0 +1,121 @@
+
+.quick-links{
+	display: flex;
+	flex-wrap: wrap;
+    list-style: none;
+	justify-content: center;
+	padding: 0;
+}
+.quick-links > li > a img {
+	height: 2rem;
+	width: 2rem;
+}
+.quick-links > li{
+	margin: 0.5rem;
+	position: relative;
+	border-radius: 1rem;
+	border: none;
+	padding: 0.5rem;
+	background-image:  linear-gradient(rgba(116, 116, 116, 0.54),
+	rgba(67, 67, 67, 0.115));
+	/* background-blend-mode: multiply; */
+}
+.quick-links > li > button{
+	position: absolute;
+	display: none;
+}
+
+.quick-links > li:hover  button{
+	display: block;
+}
+
+.quick-links > li >  a{
+	display: flex;
+	flex-direction: column;
+	width: 6rem;
+	height: 5rem;
+	align-items: center;
+	font-size: 0.75rem;
+    text-decoration: none;
+	color: white;
+}
+
+.quick-links > li > button i{
+	color: rgb(253, 245, 230);
+}
+.restricted-width{
+	width: 6em;
+	text-align: center;
+	
+}
+
+table tr td {
+	vertical-align: initial;
+	background-image: linear-gradient(rgb(0 0 0 / 64%), rgb(0 0 0 / 65%))!important;
+    background-color: transparent!important;
+}
+table th {
+	background-image: linear-gradient(rgb(0 0 0 / 64%), rgb(0 0 0 / 65%))!important;
+    background-color: transparent!important;
+}
+.tinted {
+	background-image: linear-gradient(rgb(0 0 0 / 64%), rgb(0 0 0 / 65%))!important;
+    background-color: transparent!important;
+}
+
+.link {
+	text-decoration: none;
+	color: rgb(187, 236, 236);
+	font-weight: 600;
+}
+
+.link:hover {
+	color: rgb(97, 227, 227);
+	cursor: pointer;
+	text-decoration: underline;
+}
+.cards-container{
+	display: flex;
+	flex-wrap: wrap;
+}
+.cards-container .card-body{
+	overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+.cards-container .card-body .card-text{
+	overflow-y: auto;
+}
+
+.todo-card{
+	background-image: linear-gradient(rgb(0 0 0 / 64%), rgb(0 0 0 / 65%))!important;
+    background-color: transparent!important;
+	width: 16rem;
+    display: flex;
+    margin: 0.5rem;
+    height: 9.5rem;
+}
+
+html, body{
+	height: 100%;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+	background: #f1f1f1;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+	background: #888;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+	background: #555;
+  }
