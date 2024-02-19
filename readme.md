@@ -14,7 +14,7 @@ Follow the steps to install and get going with the extension
 ------------------
 >  Note: To display a new background image and a `marquee` quote at the top of the new tab page free apis are used 
 
-1. Image api for a new background image when new tab is opened 
-2. Quote api at the top of new tab page
+1. [Image api for a new background image when new tab is opened](https://github.com/Arunangshu37/NewTabModifierChromeExtension/blob/5cb87e5a88205cb3ad733ba64b97c61f8c839e5b/scripts/main.js#L17C9-L17C60) 
+2. [Quote api at the top of new tab page](https://github.com/Arunangshu37/NewTabModifierChromeExtension/blob/5cb87e5a88205cb3ad733ba64b97c61f8c839e5b/scripts/main.js#L30C9-L30C46)
 
 [there might be a delay in getting a new image or quote based on the internet speed. Addressing of this issue is a WIP]
