@@ -18,7 +18,6 @@
 	padding: 0.5rem;
 	background-image:  linear-gradient(rgba(116, 116, 116, 0.54),
 	rgba(67, 67, 67, 0.115));
-	/* background-blend-mode: multiply; */
 }
 .quick-links > li > button{
 	position: absolute;
@@ -90,10 +89,10 @@ table th {
 .todo-card{
 	background-image: linear-gradient(rgb(0 0 0 / 64%), rgb(0 0 0 / 65%))!important;
     background-color: transparent!important;
-	width: 16rem;
+	width: 17rem;
     display: flex;
     margin: 0.5rem;
-    height: 9.5rem;
+    height: 10.5rem;
 }
 
 html, body{

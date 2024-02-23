@@ -5,7 +5,7 @@ document.getElementById('todoForm').addEventListener('submit', (e) => {
 	let request = indexedDB.open('todo', 2);
 	request.onsuccess = (event) =>{
 		const database = event.target.result
-		const [store, txn] =getObjectStore(database)
+		const [store, txn] =getObjectStore(database, 'todo')
 		formData.id = +formData.id  
 		formData.priority = +formData.priority  
 		formData.status = +formData.status 
@@ -46,7 +46,7 @@ document.getElementById('deleteBtn').addEventListener('click', (e) => {
 		let request = indexedDB.open('todo', 2);
 		request.onsuccess = (event) =>{
 			const database = event.target.result;
-			const [store, txn] = getObjectStore(database);
+			const [store, txn] = getObjectStore(database, 'todo');
 			store.delete(Number(key));
 			txn.commit();
 			database.close();
@@ -78,7 +78,7 @@ document.getElementById('export').addEventListener('click', () => {
 	let request = indexedDB.open("todo", 2);
 	request.onsuccess = (event) =>{
 		const db = event.target.result;
-		const [store] = getObjectStore(db);
+		const [store] = getObjectStore(db, 'todo');
 		 store.getAll().onsuccess = (event) => {
 			const headers = Object.keys(event.target.result[0]).toString();
 			const body = event.target.result.map((todo) => Object.values(todo).toString());
@@ -99,7 +99,6 @@ document.getElementById('export').addEventListener('click', () => {
 let nextBtn = document.getElementById('next');
 nextBtn.addEventListener('click', ( ) =>{
 	let nextValue = +nextBtn.getAttribute('next');
-	console.log(dataLength);
 	if(nextValue > dataLength - 1){
 		return;
 	}
@@ -109,7 +108,6 @@ nextBtn.addEventListener('click', ( ) =>{
 	}else{
 		document.getElementById('prev').setAttribute('prev', nextValue);
 		nextBtn.setAttribute('next', dataLength);
-		console.log('why no here')
 	}
 	updateTable(+document.getElementById('prev').getAttribute('prev'),
 	+nextBtn.getAttribute('next'), 
@@ -155,7 +153,7 @@ function handleChange(event) {
 	let request = indexedDB.open('todo', 2);
 	request.onsuccess = (event) => {
 		const database = event.target.result;
-		const [store, txn]  = getObjectStore(database);
+		const [store, txn]  = getObjectStore(database,'todo');
 		const getRequest = store.get(Number(key));
 		getRequest.onsuccess = (event) => {
 			const updatedValue= {...event.target.result, ['status']: +status}
@@ -172,7 +170,7 @@ function handleTakeAction(btnEvent) {
 	request.onsuccess = (event) => {
 		const key =btnEvent.target.getAttribute('key');
 		const database = event.target.result;
-		const [store] = getObjectStore(database);
+		const [store] = getObjectStore(database, 'todo');
 
 		store.get(Number(key)).onsuccess = (storeEvent) => {
 			document.getElementById('deleteBtn').style.display = 'block';
@@ -221,11 +219,13 @@ document.getElementById('bookmarkForm').addEventListener('submit', (e) => {
 	createQuickLinks();
 })
 
-var viewMode = 'tableView';
+
 document.getElementsByName('viewMode').forEach(element => element.addEventListener('change', handleViewModeChange));
 
 function handleViewModeChange(){
 	viewMode = this.id;
+	const settingId = this.getAttribute('settingid');
+	updateSetting(settingId, this.name, this.id);
 	updateTable(+prevBtn.getAttribute('prev'), 
 	+document.getElementById('next').getAttribute('next'), 
 	document.getElementById('sorter').value, 
@@ -248,6 +248,8 @@ function handleFilterEvent(){
 
 
 document.getElementById('displayTodos').addEventListener('change', (event) =>{
+	const settingId = event.target.getAttribute('settingid');
+	updateSetting(settingId, event.target.id, event.target.checked.toString());
 	toggleTodoPanel(event.target.checked);
 });
 
@@ -266,4 +268,24 @@ function toggleTodoPanel(flag){
 	todoContainerPanel.style.transform = flag ? 'scaleX(1)' : 'scaleX(0)';
 	todoSearchPanel.style.transform = flag ? 'scaleY(1)' : 'scaleY(0)';;
 }
-toggleTodoPanel(document.getElementById('displayTodos').checked);
+
+
+document.getElementById('footerInfoCloseBtn').addEventListener('click', saveDescriptionOnCloseOfModal);
+document.getElementById('headerInfoCloseBtn').addEventListener('click', saveDescriptionOnCloseOfModal);
+
+function saveDescriptionOnCloseOfModal(){
+	const todoInfo = document.getElementById('todoInfo');
+	const request = indexedDB.open('todo', 2);
+	request.onsuccess = (event) =>{
+		const db = event.target.result;
+		const [store] = getObjectStore(db, 'todo');
+		const getQuery = store.get(+todoInfo.getAttribute('todoid'));
+		getQuery.onsuccess = (event) => {
+			const data = event.target.result;
+			if(data != todoInfo.innerText ){
+				data.description = todoInfo.innerText;
+				store.put(data);
+			}
+		}
+	}
+}

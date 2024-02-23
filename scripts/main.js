@@ -2,43 +2,30 @@
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
-// document.body.style.backgroundColor = 'darkgrey';	
+document.body.style.backgroundColor = 'darkgrey';	
 document.body.style.backgroundRepeat = 'no-repeat';
 document.body.style.backgroundSize= 'cover';
 
-window.onload = async() =>{
+const broadcast = new BroadcastChannel('channel-123');
 
-	if(localStorage.getItem("myImage")){
-		document.body.style.backgroundImage = `url(${localStorage.getItem("myImage")})`;
-
-	}
-
-
-	fetch('https://source.unsplash.com/random/1280x720/?nature').then( async(response)=>{
-		const blobImage = await response.blob();
-		var reader = new FileReader();
-		reader.readAsDataURL(blobImage);
-		reader.onloadend = () =>{
-			document.body.style.backgroundImage = `url(${reader.result})`;
-			localStorage.setItem("myImage", reader.result);
-		}
-	});
-
-	if(localStorage.getItem('quote') != '' || localStorage.getItem('quote')!=undefined){
-		document.getElementById('quote').textContent = localStorage.getItem('quote');
-	}
-	fetch('https://api.quotable.io/quotes/random').then( async (resposne) => {
-		const jsonData = await resposne.json();
-		const quote =  `${jsonData[0].content} - ${jsonData[0].author}`;
-		localStorage.setItem('quote', quote)
-		
-		document.getElementById('quote').textContent = quote;
-	});
+if(localStorage.getItem("myImage")){
+	document.body.style.backgroundImage = `url(${localStorage.getItem("myImage")})`;
 
 }
-
-
-
+if(localStorage.getItem('quote') != '' || localStorage.getItem('quote')!=undefined){
+	document.getElementById('quote').textContent = localStorage.getItem('quote');
+}
+broadcast.postMessage({type: 'MSG_ID', value: 'test'});
+broadcast.onmessage = (event) => {
+	if(event.data && event.data.type == 'MSG_BACKGROUND_IMAGE'){
+		document.body.style.backgroundImage = `url(${event.data.backGroundImageData})`;
+		localStorage.setItem("myImage", event.data.backGroundImageData);
+	}
+	if(event.data && event.data.type == 'MSG_QUOTE'){
+		localStorage.setItem('quote', event.data.quote)
+		document.getElementById('quote').textContent = event.data.quote;
+	}
+}
 
 
 function createQuickLinks(){
@@ -90,7 +77,7 @@ function createQuickLinks(){
 /**
  * handling index db
  */
-
+var viewMode = 'tableView';
 var  database = indexedDB.open('todo', 2);
 
 var dataLength = 0;
@@ -151,6 +138,29 @@ database.onupgradeneeded = (event) => {
 		store.createIndex('status', 'status');
 		store.createIndex('hidden', 'hidden');
 	}
+
+	if(!db.objectStoreNames.contains("appSettings")){
+		let store = db.createObjectStore('appSettings', {
+			autoIncrement: true,
+			keyPath: 'id'
+		});
+		store.createIndex('description', 'description');
+		store.createIndex('property', 'property');
+		store.createIndex('value', 'value');
+
+		store.add({
+			property: 'viewMode',
+			value: 'cardsView'
+		});
+		store.add({
+			property: 'displayTodos',
+			value: 'false'
+		});
+		store.add({
+			property: 'dynamicBackground',
+			value: 'true'
+		});
+	}
 };
 
 
@@ -166,7 +176,7 @@ function updateTable(min, max, sorter, searchText) {
 			return;
 		}
 		const database = event.target.result;
-		const [store] = getObjectStore(database) 
+		const [store] = getObjectStore(database, 'todo') 
 		let getAllQuery = store.getAll();
 		getAllQuery.onsuccess = (event) =>{
 			renderTodo(event.target.result, min, max, sorter, searchText);
@@ -240,11 +250,7 @@ function createOrUpdateTodoTable(dataToBeDisplayed){
 		
 		document.getElementById(`modal-toggler-${key}`).appendChild(linkToModal);
 
-		const linkToPopup = document.createElement('a');
-		linkToPopup.setAttribute('key', `${key}`);
-		linkToPopup.addEventListener('click',  showMoreInfo);
-		linkToPopup.setAttribute('class', 'link')
-		linkToPopup.textContent = 'Details';
+		const linkToPopup = getLinkToPopup(key);
 		
 		document.getElementById(`information-${key}`).appendChild(linkToPopup);
 	});
@@ -285,11 +291,7 @@ function createOrUpdateTodoCards(dataToBeDisplayed){
 		
 		document.getElementById(`card-action-${key}`).appendChild(linkToModal);
 
-		const linkToPopup = document.createElement('a');
-		linkToPopup.setAttribute('key', `${key}`);
-		linkToPopup.addEventListener('click',  showMoreInfo);
-		linkToPopup.setAttribute('class', 'link m-1')
-		linkToPopup.textContent = 'Details';
+		const linkToPopup = getLinkToPopup(key);
 		
 		document.getElementById(`card-action-${key}`).appendChild(linkToPopup);
 		
@@ -313,6 +315,40 @@ function getOptions(defaultSelectionId) {
 
 
 
-updateTable(0, 5, '', '');
-createQuickLinks();
+function initApp(){
+	let request = indexedDB.open('todo', 2);
+	request.onsuccess = (event) => {
+		const db = event.target.result;
+		const [store] = getObjectStore(db, 'appSettings');
+		const query = store.getAll()
+		query.onsuccess = (event)=>{
+			const settings = event.target.result;
+			settings.forEach((setting) => {
+				if(setting.property == "viewMode"){
+					viewMode = setting.value;
+					const viewModeSetter = document.getElementsByName('viewMode');
+					viewModeSetter.forEach((element) => {
+						if(element.id == setting.value){
+							element.checked = true;
+						}
+						element.setAttribute('settingid', setting.id);
+					});
+				}
+				if(setting.property == "displayTodos"){
+					const displayTodos =  document.getElementById(setting.property);
+					displayTodos.setAttribute('settingid', setting.id);
+					displayTodos.checked = JSON.parse(setting.value);
+					toggleTodoPanel(JSON.parse(setting.value));
+				}
 
+				if(setting.property == "dynamicBackground"){
+
+				}
+			});
+		}
+	}
+	updateTable(0, 5, '', '');
+	createQuickLinks();
+}
+
+initApp();

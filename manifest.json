@@ -1,15 +1,18 @@
 {
     "manifest_version": 3,
-    "name": "New tab overrider",
+    "name": "Arunangshu's new tab",
     "version": "1.0.0",
     "description": "An inspiration kindled within gives rise to strong determination to achieve something bigger and better.",
     "author" : "Arunangshu Biswas",
     "permissions": [
         "tabs",
-        "bookmarks"
+        "bookmarks",
+		"offscreen"
     ],
     "chrome_url_overrides": {
         "newtab": "app.html"
-    }
-
+    },
+	"background": {
+		"service_worker": "scripts/service_worker.js"
+	}
 }

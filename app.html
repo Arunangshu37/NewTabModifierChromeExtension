@@ -97,7 +97,7 @@
 
 	<!-- Todo Modal -->
 	<div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-dialog-scrollable">
 			<div class="modal-content">
 				<form action="" id="todoForm">
 					<div class="modal-header">
@@ -165,15 +165,15 @@
 
 	<div class="modal fade bottom-0" id="infoModal" tabindex="-1" aria-labelledby="exampleModalLabel"
 		aria-hidden="true">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-fullscreen" >
 			<div class="modal-content">
 				<div class="modal-header">
 					<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="headerInfoCloseBtn" ></button>
 				</div>
-				<div class="modal-body" id="todoInfo"></div>
+				<div class="modal-body" id="todoInfo"  style="white-space: pre-wrap;" contenteditable="true"></div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" id="footerInfoCloseBtn" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>

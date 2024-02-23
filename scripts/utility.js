@@ -8,9 +8,9 @@ function showModal(modalId){
 	myModal.show();
 }
 
-function getObjectStore(dbInstance) {
-	const txn = dbInstance.transaction('todo', 'readwrite');
-	return [txn.objectStore('todo'), txn]
+function getObjectStore(dbInstance, storeName) {
+	const txn = dbInstance.transaction(storeName, 'readwrite');
+	return [txn.objectStore(storeName), txn]
 }
 
 function showMoreInfo(){
@@ -18,13 +18,13 @@ function showMoreInfo(){
 	let request = indexedDB.open('todo', 2);
 	request.onsuccess = (event) =>{
 		const database = event.target.result;
-		const [store] = getObjectStore(database);
+		const [store] = getObjectStore(database, 'todo');
 		const query = store.get(id);
 		query.onsuccess = (event) =>{
-			console.log(event.target);
 			const data = event.target.result;
-			console.log(data);
-			document.getElementById('todoInfo').textContent = data.description;
+			const todoInfo = document.getElementById('todoInfo');
+			todoInfo.textContent = data.description;
+			todoInfo.setAttribute('todoid', id);
 			showModal('#infoModal');
 		}
 	}
@@ -46,4 +46,26 @@ function getFilters(inputName){
 		}
 	});
 	return filters;
+}
+
+function updateSetting(id, property, value){
+	const request = indexedDB.open('todo', 2);
+	request.onsuccess = (event) =>{
+		const database = event.target.result;
+		const [store] = getObjectStore(database, 'appSettings');
+		store.put({
+			id: +id,
+			property: property,
+			value: value
+		});
+	}
+}
+
+function getLinkToPopup(key){
+	let linkToPopup = document.createElement('a');
+	linkToPopup.setAttribute('key', `${key}`);
+	linkToPopup.addEventListener('click',  showMoreInfo);
+	linkToPopup.setAttribute('class', 'link')
+	linkToPopup.textContent = 'Details';
+	return linkToPopup;
 }
