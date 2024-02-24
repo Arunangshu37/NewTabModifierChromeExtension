@@ -1,6 +1,7 @@
-console.log('Service worker initialized');
+
 const broadcast = new BroadcastChannel('channel-123');
 broadcast.onmessage = (event) => {
+	console.log('Got the ping');
 	if (event.data && event.data.type == 'MSG_ID') 
 	{
 		fetch('https://source.unsplash.com/random/1280x720/?nature').then(async (response) => {

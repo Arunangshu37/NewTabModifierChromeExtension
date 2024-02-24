@@ -1,5 +1,5 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "Arunangshu's new tab",
     "version": "1.0.0",
     "description": "An inspiration kindled within gives rise to strong determination to achieve something bigger and better.",
@@ -13,6 +13,7 @@
         "newtab": "app.html"
     },
 	"background": {
-		"service_worker": "scripts/service_worker.js"
+		"scripts": ["scripts/service_worker.js"],
+		"persistent": true
 	}
 }

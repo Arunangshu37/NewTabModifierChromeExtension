@@ -97,8 +97,8 @@
 
 	<!-- Todo Modal -->
 	<div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-scrollable">
-			<div class="modal-content">
+		<div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+			<div class="modal-content ">
 				<form action="" id="todoForm">
 					<div class="modal-header">
 						<h1 class="modal-title fs-5" id="todoModalLabel">Todo</h1>
@@ -168,12 +168,12 @@
 		<div class="modal-dialog modal-fullscreen" >
 			<div class="modal-content">
 				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="headerInfoCloseBtn" ></button>
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Description</h1>
+					<button type="button" class="btn-close"  aria-label="Close" id="headerInfoCloseBtn" ></button>
 				</div>
 				<div class="modal-body" id="todoInfo"  style="white-space: pre-wrap;" contenteditable="true"></div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" id="footerInfoCloseBtn" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-secondary" id="footerInfoCloseBtn" data-bs-dismiss="modal">Save & close</button>
 				</div>
 			</div>
 		</div>
@@ -296,10 +296,13 @@
 			</span>
 		</div>
 	</div>
+
 	<script src="bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+	<script src="./scripts/declarations.js"></script>
 	<script src="./scripts/utility.js"></script>
 	<script src="./scripts/main.js" defer></script>
 	<script src="./scripts/registeredEventListeners.js"></script>
+
 
 </body>
 

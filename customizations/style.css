@@ -1,3 +1,15 @@
+@font-face {
+	font-family: 'source-code';
+	src: url(./SourceCodePro-Regular.ttf);
+}
+@font-face {
+	font-family: 'fredoka';
+	src: url(./Fredoka-Regular.ttf);
+}
+@font-face {
+	font-family: 'fria-code';
+	src: url(./FiraCode-Regular.ttf);
+}
 
 .quick-links{
 	display: flex;
@@ -95,10 +107,24 @@ table th {
     height: 10.5rem;
 }
 
+.more-details{
+	border: none;
+	height: 100%;
+	padding: 0.25rem;
+	transition: all 0.25s ease-in-out;
+}
+.more-details:hover{
+	cursor: pointer;
+	box-shadow: 0px 0px 0px 1px whitesmoke;
+	border-radius: 0.5rem;
+	background-color: #3e3e3ea0;
+}
 html, body{
 	height: 100%;
 }
-
+html *{
+	font-family:  'fria-code';
+}
 /* width */
 ::-webkit-scrollbar {
 	width: 10px;

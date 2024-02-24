@@ -1,4 +1,3 @@
-"use strict";
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
@@ -16,6 +15,7 @@ if(localStorage.getItem('quote') != '' || localStorage.getItem('quote')!=undefin
 	document.getElementById('quote').textContent = localStorage.getItem('quote');
 }
 broadcast.postMessage({type: 'MSG_ID', value: 'test'});
+console.log('Message has been sent');
 broadcast.onmessage = (event) => {
 	if(event.data && event.data.type == 'MSG_BACKGROUND_IMAGE'){
 		document.body.style.backgroundImage = `url(${event.data.backGroundImageData})`;
@@ -74,52 +74,7 @@ function createQuickLinks(){
 }
 
 
-/**
- * handling index db
- */
-var viewMode = 'tableView';
-var  database = indexedDB.open('todo', 2);
 
-var dataLength = 0;
-
-var statuses = [
-	{
-		id: 0,
-		name: 'new',
-		statusClass: 'text-bg-primary'
-	},
-	{
-		id: 1,
-		name: 'In Progress',
-		statusClass: 'text-bg-info'
-	},
-	{
-		id: 2,
-		name: 'Complete',
-		statusClass: 'text-bg-success'
-	}
-]
-var priorities = [
-	{
-		id: 1,
-		name: 'High',
-		priorityClass: 'text-bg-danger'
-	},
-	{
-		id: 2,
-		name: 'Medium',
-		priorityClass: 'text-bg-warning'
-	},
-	{
-		id: 3,
-		name: 'Low',
-		priorityClass: 'text-bg-secondary'
-	}
-]
-
-function getPriorityInfo(id){
-	return priorities.find((priority) => priority.id == id);
-}
 
 database.onsuccess = function () {
 	let db = database.result;
@@ -189,8 +144,6 @@ function updateTable(min, max, sorter, searchText) {
 
 function renderTodo(data, min, max, sorter, searchText=''){
 	dataLength = data.length;
-	
-	
 	let sortedData = data;
 	if(sorter!= '-'){
 		let sortQuery = sorter.split('-');
@@ -208,19 +161,17 @@ function renderTodo(data, min, max, sorter, searchText=''){
 		document.getElementById('todoTable').style.display='none';
 		document.getElementById('todo-cards').style.display='flex';
 		createOrUpdateTodoCards(dataToBeDisplayed);
-	}else{
-		document.getElementById('todoTable').style.display='table';
-		document.getElementById('todo-cards').style.display='none';
-		createOrUpdateTodoTable(dataToBeDisplayed);
+		return;
 	}
+	// default view is table as always.
+	document.getElementById('todoTable').style.display='table';
+	document.getElementById('todo-cards').style.display='none';
+	createOrUpdateTodoTable(dataToBeDisplayed);
 }
 
 
 function createOrUpdateTodoTable(dataToBeDisplayed){
-
-
 	let table = document.getElementById('todoTable');
-	
 	
 	for(var i = 1;i<table.rows.length;){
 		table.deleteRow(i);
@@ -240,18 +191,9 @@ function createOrUpdateTodoTable(dataToBeDisplayed){
 			<td id='modal-toggler-${key}'></td>
 			<td id='information-${key}' ></td>`;
 		row.innerHTML = rowData;
-		const linkToModal = document.createElement('a');
-		linkToModal.setAttribute('data-bs-target', "#todoModal");
-		linkToModal.setAttribute('data-bs-toggle', "modal");
-		linkToModal.setAttribute('class', 'link')
-		linkToModal.setAttribute('key', `${key}`)
-		linkToModal.addEventListener('click',  handleTakeAction);
-		linkToModal.textContent = 'Take Action';
-		
+		const linkToModal = getLinkToModal(key);
 		document.getElementById(`modal-toggler-${key}`).appendChild(linkToModal);
-
 		const linkToPopup = getLinkToPopup(key);
-		
 		document.getElementById(`information-${key}`).appendChild(linkToPopup);
 	});
 }
@@ -268,41 +210,34 @@ function createOrUpdateTodoCards(dataToBeDisplayed){
 		cardDiv.setAttribute('class', 'card todo-card');
 
 		cardDiv.innerHTML = `
-			<div class="card-body"  >
+			<div class="card-body" >
 				<h5 class="card-title">
-					<span class="d-flex d-flex justify-content-between">
-						<h6><span class="badge ${priority.priorityClass} badge-secondary">${priority.name}</span></h6>	
-						<h6><span class="badge ${status.statusClass} badge-secondary" />${status.name}</span></h6>	
+					<span class="d-flex d-flex justify-content-between"  id='card-action-${key}'>
+						<div class='d-flex justify-content-between my-auto'>
+							<h6 class='mb-0'><span class="badge ${priority.priorityClass} badge-secondary">${priority.name}</span></h6>	
+							<h6 class='mb-0 ms-2'><span class="badge ${status.statusClass} badge-secondary" />${status.name}</span></h6>
+						</div>	
 					</span>
-
 				</h5>
-				<p class="card-text">${_['title']}</p>
+				<p class="card-text more-details" id='card-${key}'  key='${key}' >${_['title']}</p>
 			</div>
-			<div class='card-footer d-flex justify-content-end' id='card-action-${key}'></div>
+			
 		`;
 		todoCards.appendChild(cardDiv);
-		const linkToModal = document.createElement('a');
-		linkToModal.setAttribute('data-bs-target', "#todoModal");
-		linkToModal.setAttribute('data-bs-toggle', "modal");
-		linkToModal.setAttribute('class', 'link m-1')
-		linkToModal.setAttribute('key', `${key}`)
-		linkToModal.addEventListener('click',  handleTakeAction);
-		linkToModal.textContent = 'Take Action';
+		let button = document.createElement('button');
+		button.setAttribute('key', key);
+		button.setAttribute('id', `action-btn-${key}`);
+		button.addEventListener('click',handleTakeAction);
 		
-		document.getElementById(`card-action-${key}`).appendChild(linkToModal);
-
-		const linkToPopup = getLinkToPopup(key);
-		
-		document.getElementById(`card-action-${key}`).appendChild(linkToPopup);
-		
+		button.setAttribute('data-bs-target', "#todoModal");
+		button.setAttribute('data-bs-toggle', "modal");
+		button.innerHTML = `<i class="bi bi-card-text" key='${key}' ></i>`;
+		button.setAttribute('class', 'btn btn-light');
+		document.getElementById(`card-action-${key}`).append(button);
+		document.getElementById(`card-${key}`).addEventListener('click', showMoreInfo);
 	});
 }
 
-
-
-function getStatusInfo(id){
-	return statuses.find((status) => status.id == id);
-}
 
 function getOptions(defaultSelectionId) {
 	let options = '';
@@ -312,16 +247,13 @@ function getOptions(defaultSelectionId) {
 	return options;
 }
 
-
-
-
 function initApp(){
 	let request = indexedDB.open('todo', 2);
 	request.onsuccess = (event) => {
 		const db = event.target.result;
 		const [store] = getObjectStore(db, 'appSettings');
 		const query = store.getAll()
-		query.onsuccess = (event)=>{
+		query.onsuccess = (event) => {
 			const settings = event.target.result;
 			settings.forEach((setting) => {
 				if(setting.property == "viewMode"){

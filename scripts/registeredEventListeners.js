@@ -168,19 +168,20 @@ function handleChange(event) {
 function handleTakeAction(btnEvent) {
 	let request = indexedDB.open('todo', 2);
 	request.onsuccess = (event) => {
-		const key =btnEvent.target.getAttribute('key');
+		const key = btnEvent.target.getAttribute('key');
 		const database = event.target.result;
 		const [store] = getObjectStore(database, 'todo');
 
 		store.get(Number(key)).onsuccess = (storeEvent) => {
+			const data = storeEvent.target.result;
 			document.getElementById('deleteBtn').style.display = 'block';
-			document.getElementById('todoTitle').value= storeEvent.target.result.title;
-			document.getElementById('todoDescription').value= storeEvent.target.result.description;
-			document.getElementById('todoStatus').value= storeEvent.target.result.status;
+			document.getElementById('todoTitle').value=data.title;
+			document.getElementById('todoDescription').value= data.description;
+			document.getElementById('todoStatus').value= data.status;
 			document.getElementById('mode').value= 'update';
 			document.getElementById('todoId').value = key;
 
-			document.getElementsByName('priority').forEach((item) => item.checked = item.value ==  storeEvent.target.result.priority)
+			document.getElementsByName('priority').forEach((item) => item.checked = item.value ==  data.priority)
 
 			document.getElementById('deleteBtn').setAttribute('key', `${key}`);
 			database.close();
@@ -203,7 +204,6 @@ function manageQuickLinks() {
 		showToast('Quick Link deleted successfully', 'text-bg-danger');
 		createQuickLinks();
 	}
-	
 }
 
 document.getElementById('bookmarkForm').addEventListener('submit', (e) => {
@@ -271,7 +271,7 @@ function toggleTodoPanel(flag){
 
 
 document.getElementById('footerInfoCloseBtn').addEventListener('click', saveDescriptionOnCloseOfModal);
-document.getElementById('headerInfoCloseBtn').addEventListener('click', saveDescriptionOnCloseOfModal);
+document.getElementById('headerInfoCloseBtn').addEventListener('click', confirmThenCloseModal);
 
 function saveDescriptionOnCloseOfModal(){
 	const todoInfo = document.getElementById('todoInfo');
@@ -288,4 +288,15 @@ function saveDescriptionOnCloseOfModal(){
 			}
 		}
 	}
+}
+
+function confirmThenCloseModal(){
+	const todoInfo = document.getElementById('todoInfo');
+	if(historicalTodoInfoInnerText != todoInfo.innerText){
+		if(confirm("Are you sure you want to close the modal. Some changes you did will get lost is not saved and closed?")){
+			dismissModal('#infoModal');
+		}
+		return;
+	}
+	dismissModal('#infoModal');
 }
