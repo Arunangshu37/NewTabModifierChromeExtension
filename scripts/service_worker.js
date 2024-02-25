@@ -1,16 +1,18 @@
 
-const broadcast = new BroadcastChannel('channel-123');
-broadcast.onmessage = (event) => {
-	console.log('Got the ping');
-	if (event.data && event.data.type == 'MSG_ID') 
-	{
+
+let getVersionPort;
+self.addEventListener('message', (event) => {
+	if (event.data && event.data.type === 'INIT_PORT') {
+		getVersionPort = event.ports[0];
+	  }
+
+	if (event.data && event.data.type === 'START_PROCESS') {
 		fetch('https://source.unsplash.com/random/1280x720/?nature').then(async (response) => {
 			const blobImage = await response.blob();
 			var reader = new FileReader();
 			reader.readAsDataURL(blobImage);
 			reader.onloadend = () => {
-				console.log('Data sent for background image');
-				broadcast.postMessage({ type: 'MSG_BACKGROUND_IMAGE', backGroundImageData: reader.result });
+				getVersionPort.postMessage({ type: 'MSG_BACKGROUND_IMAGE', backGroundImageData: reader.result });
 			}
 		});
 
@@ -18,7 +20,7 @@ broadcast.onmessage = (event) => {
 		fetch('https://api.quotable.io/quotes/random').then(async (response) => {
 			const jsonData = await response.json();
 			const quote = `${jsonData[0].content} - ${jsonData[0].author}`;
-			broadcast.postMessage({ type: 'MSG_QUOTE', quote: quote });
+			getVersionPort.postMessage({ type: 'MSG_QUOTE', quote: quote });
 		});
 	}
-}
+});
