@@ -7,7 +7,8 @@ self.addEventListener('message', (event) => {
 	  }
 
 	if (event.data && event.data.type === 'START_PROCESS') {
-		fetch('https://arunangshu37.github.io/images/1.jpg').then(async (response) => {
+		const randomImage = 1 + Math.floor(Math.random() * 100) % 11
+		fetch(`https://arunangshu37.github.io/images/${randomImage}.jpg`).then(async (response) => {
 			const blobImage = await response.blob();
 			var reader = new FileReader();
 			reader.readAsDataURL(blobImage);
